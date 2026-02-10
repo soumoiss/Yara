@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background-image: url("fundo.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* começa do topo */
+    }
+
+    .container {
+      width: 100%;
+      max-width: 360px;
+      padding: 20px;
+      text-align: center;
+
+      /* 🔽 AJUSTE PRINCIPAL (DESCE TUDO) */
+      transform: translateY(420px);
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input.usuario {
+      background-color: #8fa9cf;
+      color: #fff;
+    }
+
+    input.senha {
+      background-color: #12bcd6;
+      color: #fff;
+    }
+
+    input::placeholder {
+      color: #ffffffcc;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 30px;
+      font-size: 18px;
+      background-color: #0b8fa3;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .email {
+      margin-top: 60px;
+      font-size: 15px;
+      color: #2f5f4f;
+    }
+
+    .email a {
+      color: #2f5f4f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .erro {
+      margin-top: 10px;
+      color: #b00020;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <input
+      type="text"
+      id="usuario"
+      class="usuario"
+      placeholder="Apelido"
+    >
+
+    <input
+      type="password"
+      id="senha"
+      class="senha"
+      placeholder="Senha"
+    >
+
+    <button onclick="verificarLogin()">
+      prosseguir
+    </button>
+
+    <div class="erro" id="erro">
+      Usuário ou senha incorretos
+    </div>
+
+    <div class="email">
+      não sabe a senha?<br>
+      <a href="#" onclick="abrirEmail()">s0upoetamoiss@gmail.com</a>
+    </div>
+
+  </div>
+
+  <script>
+    function verificarLogin() {
+      const usuario = document.getElementById("usuario").value;
+      const senha = document.getElementById("senha").value;
+      const erro = document.getElementById("erro");
+
+      if (usuario === "AZEDA" && senha === "03.09.25") {
+        window.location.href = "home.html";
+      } else {
+        erro.style.display = "block";
+      }
+    }
+
+    function abrirEmail() {
+      window.location.href =
+        "mailto:s0upoetamoiss@gmail.com?subject=NAO%20SEI%20A%20SENHA";
+    }
+  </script>
+
+</body>
+</html>

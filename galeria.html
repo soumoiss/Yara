@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeria estilo Pinterest</title>
+<link href="https://fonts.cdnfonts.com/css/seasons" rel="stylesheet">
+<style>
+/* --- ESTILOS ORIGINAIS MANTIDOS --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Seasons', serif;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    url("fundo2.png"),
+    linear-gradient(180deg, #f6f3ee, #e9e3da);
+  background-repeat: repeat;
+  background-size: 300px;
+  padding: 80px 20px 40px;
+}
+
+.voltar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 20;
+}
+
+.voltar a {
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 30px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: background 0.3s;
+}
+
+.voltar a:hover {
+  background: #000;
+}
+
+.titulo {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: #2e2e2e;
+}
+
+/* --- LAYOUT MASONRY RESPONSIVO --- */
+.galeria {
+  column-count: 5;
+  column-gap: 15px; 
+  max-width: 1400px; /* Limitador para não esticar demais em monitores UltraWide */
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.galeria img {
+  width: 100%;
+  display: block;
+  margin-bottom: 15px; 
+  border-radius: 16px;
+  cursor: pointer;
+  height: auto;
+  transition: transform 0.3s ease, opacity 0.3s;
+  break-inside: avoid; /* Evita que a imagem quebre entre colunas */
+}
+
+.galeria img:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+/* --- LIGHTBOX (TELA CHEIA) --- */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: none; /* Escondido por padrão */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  cursor: zoom-out;
+  padding: 20px;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Garante que a proporção original seja respeitada */
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  cursor: default;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 1920px) {
+  .galeria { column-count: 3; }
+}
+
+@media (max-width: 1920px) {
+  .galeria { column-count: 3; }
+}
+
+@media (max-width: 1920px) {
+  .galeria { 
+    column-count: 3; 
+    column-gap: 5px;
+    padding:  5px;
+  }
+  .titulo { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="voltar">
+  <a href="home.html">← voltar</a>
+</div>
+
+<h1 class="titulo">Galeria do meu ♡</h1>
+
+<div class="galeria" id="galeria">
+  </div>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightbox-img" src="" alt="Visualização em tela cheia">
+</div>
+
+<script>
+// 1. Array de imagens (mantenha seus nomes aqui)
+const imagens = [
+  "791f82e941a3b9515e5250fb5b2d0e98.jpg",
+  "1527b1a8deaa56977a2dce501b0764a9.jpg",
+  "b2a1c6a606c9f234ad454756f80bbea4.jpg",
+  "1df5cc8e887797aafb2b4c4ca7eec2f4.jpg",
+  "52a6ca412304a393591ec480f8f3255d.jpg",
+  "7084e34bc96415974262c955cda5997a.jpg",
+  "6fba95775fd0599859e4d5017e8da546.jpg",
+  "23074cf9261e4500a32bad490ef23e19.jpg",
+  "bc7aab401497e4e20565e8ce519c3ae3.jpg",
+  "1df5615cee1668999d648b620c91f4f4.jpg",
+  "95abad3a030971ce437920ebe4d34dc7.jpg",
+  "37691cb6a8f0c7a9943eb9051e0acd60.jpg",
+  "45c7ca7b1dff6946509c54fa33a382f6.jpg",
+  "5fac84fe8de6f5a66afba69ed8b3d692.jpg",
+  "199586b9c5ed70075512f416f07fab29.jpg",
+  "95b4eafc1ffeaea59f9707811de479fa.jpg",
+  "0f0b978db83331fcafdc748ed468e6ec.jpg",
+  "bc52107c623e5b81cd0a461c2bc065d2.jpg",
+  "4cc9a172e505528c11ed881ed5f53ef2.jpg",
+  "766b5f0a96c112d3fac6eceb2c31fe01.jpg",
+  "ce5d440dbf58b2b6e033886507cdb212.jpg",
+  "b6a9c98d8ba2c36d662c88b6dccd65f0.jpg",
+  "92ff0d4f5f13db3616d182bfeb7f1b1d.jpg",
+  "1e102115677527b2b69f0904f78cca1f.jpg",
+  "cf427db3a2e07300660c3f73d4da98e4.jpg",
+  "45c7ca7b1dff6946509c54fa33a382f6 (1).jpg",
+  "4ea1ca7eb0d650b91c6a8944a985e1e5.jpg",
+  "7390ce6605dbe557ba7f954c3a697c7e (1).jpg",
+  "6e40d70b928371602d78eef687768404.jpg",
+  "9cb85e479aaa8e0982def89d657b3a15 (1).jpg",
+  "de1b9176bcee4320901f844899a0a206.jpg",
+  "bf9202d73ac371a43c58e97af13914d9.jpg",
+  "fae2589d607df2d9548f8db2e76dbd8c.jpg",
+  "6859b4200cc8851d16ba2d66a24c9015.jpg",
+  "7029b1baf271d426fda58caaecb92c2b.jpg",
+  "77f8c6a0fc0e2ed69e8dcdcf350ab548.jpg",
+  "d7e02cdf11e1e2c247f86c1ec8dd73b0.jpg",
+  "3ce666bfedf3c8c922da813ebf8b4d10.jpg",
+  "2a48533cf70065cc5fb81cbe927eaf8a.jpg",
+  "2e3b9923cb3add3d6308cb6ec689174b.jpg",
+  "2546d851f85208444e591b27f53a23f2.jpg",
+  "9acc2f142e8c90ee9a72a50c881eb7eb.jpg",
+  "d3c0be5c192add0c9b0b0a03e44f6bf3.jpg",
+  "98a7c9594c361918acef3e4168aa162b.jpg",
+  "0ef087279b66b708601df1bc3d9e628e.jpg",
+  "5d05d60fa93e83ef2c93eda74dcdf190.jpg",
+  "45108c4c13057e9afdb7a6517bac32c9.jpg",
+  "fa5bf805b58b721661aaa7a7af6adf55.jpg",
+  "716b9a568208c104c1b89d360f9e0f4c.jpg",
+  "7509f9ee272d9645bf637746ae8cb0f1.jpg",
+  "432185022e05aa54488b3646030d7633.jpg",
+  "c0c3cbe3e549e551c1a72c306e15c9df.jpg",
+  "d8c4f2305a7d7cd0b4e2eec64dc2fac2.jpg",
+  "1cdc2dfea5bbd38c47e152f5edf9dc99.jpg",
+  "2921a37f7e2689c17758cb1ee8bb9fe6.jpg",
+  "691162bb6a340cff8f6e58560d5d1a05.jpg",
+  "5566afe1799cf08b9b918464bbcfbef3.jpg",
+  "74283e4925ee1ee822a49ea59a9de0a8.jpg",
+  "acb55ca7e3e68d775cd25d995427e0c7.jpg",
+  "025dd327a955aaec39a774aa6b6b9d98.jpg",
+  "205b56ff9d304ff2b70563dff0e60c31.jpg",
+  "ba3731da8a2de93fbd394704e24beb73.jpg",
+  "ba3731da8a2de93fbd394704e24beb73 (1).jpg",
+  "6a9ec7272ecc2b0c945614c77a7ab6d6.jpg",
+  "216b7d7d3bd75cc9473ddd8396a41711.jpg",
+  "a6d629b87fd50ebc235691cea0b46799.jpg",
+  "976ec0c275fa9696a1547c0e06ef5fb4.jpg",
+  "f8589634873bd9b4aea1ae235d75e432.jpg",
+  "376a81ae8330644557db5a3549f547c4.jpg",
+  "2afaf1d5d2e829bb81a159badee712bc.jpg",
+  "874402083918700677.jpg",
+  "5af5b81e46a800f8292dfaec31103855.jpg",
+  "04f3845631cc273314826a96070fd93b (1).jpg",
+  "f88ba0c34bddfe2d7b2406e2680115a3.jpg",
+  "18474de27ac945af751acf7a891cc59a.jpg",
+  "3237110f8195223507c726a53f5eb8f9.jpg",
+  "3f7b7fb11404fce6c9d64b5650cc5e9b.jpg",
+  "70b5ac231d30773df2fc69cb9b301b06.jpg",
+  "f91fe609ae699d1710f915517baba240.jpg",
+  "2d3b5ee07204077c585a4bcada1d0182.jpg",
+  "b09dc67adcf00acdf7224a0df88835d1.jpg",
+  "2b0f5a82a3a1c83dd4263abc61f43d54.jpg",
+  "17e9cd9ed2979c320976e7b220e99635.jpg",
+  "d25d5dc77749ea0ea3ed6f275bf1831d.jpg",
+  "d48d2c010dd588f753b752c769188a10.jpg",
+  "744212049853799d576d123f11d5141a.jpg",
+  "80a72ba6e78d679894bfff2488462c6f.jpg",
+  "b3f01aaef3ce375c867dc12689ff1da8.jpg",
+  "e1ea02228f958558a0cb813f72f8d6ec.jpg",
+  "f8c78fb90a3d82c9db7f8a3e28417288.jpg",
+  "fd713ee6b178b04c2248ad6b12a0405a.jpg",
+  "1d8ca3a3a317ef9686ae0337aa9b1b50.jpg",
+  "13d205255f5cc9d6568d322c05b8854f.jpg",
+  "f92d87c81390b2a028469a60ffdb33c5.jpg",
+  "bff1fa33bafa259e664ca37353bd2359.jpg",
+  "c5f0989ca693ea6a31c6f23c91a40937.jpg",
+  "064af65d86b89a557be7fc387a5b48c4.jpg",
+  "45108c4c13057e9afdb7a6517bac32c9 (1).jpg",
+  "98de659984ca681c6b5a3be66293e16a.jpg",
+  "5d05d60fa93e83ef2c93eda74dcdf190 (1).jpg",
+  "60ffee8744837ed20f47743ba102a267.jpg",
+  "d7757056e377f4657d18dde79905286e.jpg",
+  "4c36bf34d0e4ff1f7996ee7fe6b284b9.jpg",
+  "ab701fae377446db61bde9621b993686.jpg",
+  "1a1d688ea37a32eb57cc0a89e6557244.jpg",
+  "0958b5a7c371d63ccf4f28bdf77da0ba.jpg",
+  "874402083918700707.jpg",
+  "c0a60d61876be2efce3bfe83363c5d50.jpg",
+  "afc2869615da8e6604681245bd499e6a.jpg",
+  "fc3e436d1b7ccd656979cc4fdf43bbab.jpg",
+  "61cb737e38b5d23832daf534d3651314.jpg",
+  "e06f1c81fd19fe29ca350a3caf494b63.jpg",
+  "7891590d17dcd59933d6a0f02e29d315.jpg",
+  "c431ddc0a6dfd64e6de3aa7a856aa3c6.jpg",
+  "ef9ce2312ea63a9e785486a59695d9d9.jpg",
+  "88b85333f0c3d9ce5c94a9ccf31bd4d1.jpg",
+  "5279d23770b711b5ec747836021322a9.jpg",
+  "5948551905008cdbc249754a18363413.jpg",
+  "20d975ae5d4f33d0caed1a0dad56b4a1.jpg",
+  "ad7ff3a67045e5b2876952c03fd463c1.jpg",
+  "92fd512f4df817e2ca05d18a3453f24d.jpg",
+  "0ecf307075cca1fa02081c1c2e9ee71c.jpg",
+  "637f462fb3a036614bf8d48a230e5cd7.jpg",
+  "bb2516d4b28bc9f0b5239c0b9c091648.jpg",
+  "3c343430005ee9e665ca637a9b08e0ab.jpg",
+  "f8f592ac88f25e9a0a977e0460249552.jpg",
+  "51a3fe4874c17685351bf2a1fed50409.jpg",
+  "8234f9277b87f0910af11be918f031f9.jpg",
+  "317464db0f91b50eed13ff697983ebdb.jpg",
+  "32029c825182e7361d2164842e05d6fd.jpg",
+  "430a621a4e06028900f549ebbd2cbb4.jpg",
+  "bd16091d0991e22b38d69984d54a8845.jpg",
+  "aafd307c453c2ad787c884b28bb64d25.jpg",
+  "97e1055662259fa3e91b77ff90fa564e.jpg",
+  "7c701dccf725383273e5b97b3abcc32b.jpg",
+  "78c4ded09145116097b1e6ed6eb8e462.jpg",
+  "d60847670d11847e0e849df118a733a8.jpg",
+  "847cc3922611fe7048348132fccb9feb.jpg",
+  "a2858f03bd01afc66af96724b3b14ee4.jpg",
+  "6294447e699576b5f30ef71c2a52d9ee.jpg",
+  "281fb3516d96df3d8543836be33e77b9.jpg",
+  "96c5f770e48cc00837cfbe9655769c26.jpg",
+  "874402083918700678.jpg",
+  "c1466f8196f0393ed7e01278291b1658.jpg",
+  "04f3845631cc273314826a96070fd93b.jpg",
+  "150a2ddc1ff71526914a7d718cd78b8b.jpg",
+  "2be2ee9fb87641be9c80704d1f1c1434.jpg",
+  "a47f9d773990400f426c54a090bb172b.jpg",
+  "10556f4b386ceb5171cae6c13850aa8e.jpg",
+  "3349eca16f0ccada1abf1daa6c361351.jpg",
+  "1bc557fc898d2d62b46fb4e3577e2ee8.jpg",
+  "84ed7acc0457e1546a83a96cefedb036.jpg",
+  "02eea51c893e7689b1cf7659adf10621.jpg",
+  "0e521df730bba88dc4d9ca6384f22a8c.jpg",
+  "37847c2adfafa4212931ec2fcb1e5149.jpg",
+  "c9d70acacd4317f588e923e807fef520.jpg",
+  "617dc5ef77cf864cb6aacd80177f064b.jpg",
+  "8fafbc7432d4e5d9bcdbdf95c88cb520.jpg",
+  "a5467a2676d75f07a39b4d0497fba0b4.jpg",
+  "d7c5516e038934cf15f28515d6d383b7.jpg",
+  "9616ae360bd03e2ce38ee52a3170eb73.jpg",
+  "00c3902b3c8bf6aae187ad54a7d3d1b8.jpg",
+  "87f7432d6732f6db4ec5c0118351d1ea.jpg",
+  "64e4e6bc3cdf558817f0607302dd0e70.jpg",
+  "455dc534b90f5fec9424ee2691aa7e72.jpg",
+  "46366640573e98aebd979d2cdf46965a.jpg",
+  "8b6ea064af6caacc0912dbe101def875.jpg",
+  "1c717e7a9eb2aa7587d106fb9923f90f.jpg",
+  "baf40ae37d062ca05a1ba43ed5f8ae1b.jpg",
+  "f2ca1589a73351b948b4331bf8d5d874.jpg",
+  "8a00dd94ebd4f3be6fcf17fe07861183.jpg",
+  "1ccecb936d66facd3fd29d9fdbde8112.jpg",
+  "f537f3a40bbd4985bb593935bddf5c61.jpg",
+  "0ef087279b66b708601df1bc3d9e628e (1).jpg",
+  "c839c946ac82222f2bb7cd4072554797.jpg",
+  "6afcee5af3007c9d4eb34ea61ca592cf.jpg",
+  "512d67e9becd47d946e6beec7f05f130.jpg",
+  "4251778e3611910e6b2a89a7be34712e.jpg",
+  "874402083918700683.jpg",
+  "7d754ed9c00d08f8e9ae1e6d9c37f51e.jpg",
+  "c6a4045689cc60758d15502eeaad7142.jpg",
+  "dae73329ae6f54ba79cb47384165a6ed.jpg",
+  "0ff97ecf5ee0072e8494180ddccf0fbc.jpg",
+  "a6eeff77f13258adc159dbf5ffcae926.jpg",
+  "f36ea985f63f416f3af4108391fba287.jpg",
+  "42e38836abbdbb68762a8a432a2882d2.jpg",
+  "98e0a74ca62cda661f59a810ef76170b.jpg",
+  "f514d7661617548c0a6da6adde4ab25c.jpg",
+  "d731a51fd8e17833dcba9434dea3da16.jpg",
+  "4684236bf43782a1248eb192ea678f94.jpg",
+  "4fb433671c3fa1b9ef2273341a05cb6b.jpg",
+  "6fd3e6383631b5ae51e43ebff3abb97b.jpg",
+  "f0a8bc630a683c677bdd7cd41cedb056.jpg",
+  "c2b6df30f592dd9595e1a78304b1d651.jpg",
+  "afe1c0ffa8704ff20c270fcdd75d5112.jpg",
+  "3c582421d9dab28daee236552abc55d1.jpg",
+  "bca51d98f5f427e24e67a84047d3f501.jpg",
+  "c362dcb9acbadc14bb8f998d0a96386b618f93bd82.jpg",
+  "6c3319b35031f4db7bae42666b00a971.jpg",
+  "3738f155ce9ba50e3c248bdc9d202a83.jpg",
+  "3ef6ca584ce98e2c2d8e42a9a10ce0e3.jpg",
+  "022bcfa0f3228466011d5dcc96011951.jpg",
+  "43453334f09a769a0ab0b06a70b74bb5.jpg",
+  "9595738c0d6eb35db0721f225134f50c.jpg",
+  "d6e6e45ad1bc203bdf75af14420afb8c.jpg",
+  "068e71651cf91421095c59e3ddeece6f.jpg",
+  "286e9f78f3be67e63350f55520548c2f.jpg",
+  "b8a6ab5a450e8ade662a11a5ed5fa07f.jpg",
+  "1446d75d112202a6f8f08bfa0c8ee466.jpg",
+  "ed0f20544fb84aa51057a3c01f954e3f.jpg",
+  "d079b5750adeab22a23ece9bfd2344a1.jpg",
+  "c87b02eb5665613f4a8be6cea1aadd4c.jpg",
+  "947595c08141c4a03fcc39299eebb58f.jpg",
+  "874402083918700695.jpg",
+  "bf7520f2d0f2cf286828c1c0f7afe9d4.jpg",
+  "e920a8073a80831cfc68c4a99e827ff7.jpg",
+  "0b78f633355137b82589f63dd75dafc6.jpg",
+  "74ebcc3fabb73e497727f7ae91eea73a.jpg",
+  "fd5f0752cd92ae7d7960db860b269977.jpg",
+  "1cf82f119ef732059185d8ac3816575a.jpg",
+  "8b7109a1fb914b1298d0c21dfd5e6fa4.jpg",
+  "1398f2b06110f76bbea8c143b92d313c.jpg",
+  "c46abfdc9cc317dc166daef4145bae12.jpg",
+  "4df25b78cdef815e0e938dcd5be5cb0c.jpg",
+  "e322607d49753fceca3b354572d889bc.jpg",
+  "d84ed28a4e79f2921e3b6035fa0476ba.jpg",
+  "b478cb8527ea200f45f0cfbc69577201.jpg",
+  "85ec23a7d4b961d64ca77ba8308d706a.jpg",
+  "f01d99d7ef5d38370aeef2ac073418d5.jpg",
+  "d31ddca7356336b2404b064f1837a33f.jpg",
+  "06c79a33812c13aeb323ffcf093a35c0.jpg",
+  "cdd730b358c259157f506f58d254d21a.jpg",
+  "6ea3ef80d939fa1e263a87a5449dc253.jpg",
+  "4c59e137fcd174bb0b9f3376eefddf86.jpg",
+  "28055e9f0b87267ac5450d6f1312121b.jpg",
+  "46604cd411e6884cc9d1afbff6c95440.jpg",
+  "073f556e9acfa12fe29cd68199e12b15.jpg",
+  "3b580aea6f5d2e8e98bf6f1a6b03b2b7.jpg",
+  "49ec22d65a24da5b218cb2d9a21b0274.jpg",
+  "874402083918700700.jpg",
+  "874402083918700687.jpg",
+  "874402083918700671.jpg",
+  "874402083918700689.jpg",
+  "874402083918700688.jpg",
+  "874402083918700656.jpg",
+  "874402083918700648.jpg",
+  "874402083918700649.jpg",
+  "874402083918700632.jpg",
+  "874402083918700672.png",
+  "874402083918700615.jpg",
+  "874402083918700625.jpg",
+  "874402083918700612.jpg",
+  "874402083918700609.jpg",
+  "874402083918700605.jpg",
+  "874402083918700602.webp",
+  "874402083918700568.jpg",
+  "874402083918700562.jpg",
+  "874402083918700557.jpg",
+  "874402083918700559.jpg",
+  "874402083918700549.jpg",
+  "874402083918700437.jpg",
+  "874402083918700403.jpg",
+  "874402083918700424.png",
+  "874402083918700382.png",
+  "874402083918700362.jpg",
+  "874402083918700329.jpg",
+  "874402083918700331.jpg",
+  "874402083918700325.jpg",
+  "874402083918700326.jpg",
+  "874402083918700292.jpg",
+  "874402083918700284.jpg",
+  "874402083918700254.jpg",
+  "874402083918700244.jpg",
+  "874402083918700250.png",
+  "874402083918700232.jpg",
+  "874402083918700173.jpg",
+  "874402083918700174.jpg",
+  "874402083918700165.jpg",
+  "874402083918700163.jpg",
+  "874402083918700162.jpg",
+  "874402083918700155.jpg",
+  "e5f24b33c62f9b51b76d4a8b62c5fb1f.jpg",
+  "f0beb9d5a7ece63d3abc2737c5b85888.jpg",
+  "394ee501433eb2e841d98e41a9fc2696.jpg",
+  "93b718f114df56fe9cbae485ec88f1ca.jpg",
+  "84f8006f5f1181977db4b691730828c9.jpg",
+  "ae17dfff2c1a5fc6341c772a0c181736.jpg",
+  "33e0f3ab81c6a762392b11a514e2808e.jpg",
+  "30906dfdd7ecf50282b53d202454971f.jpg",
+  "3967a4285f46a1626a004b069f016a3f.jpg",
+  "f5a50e36521dc47d623052f30329b9e2.jpg",
+  "1295a13d4a55f87e1f5df44b396b2e80.jpg",
+  "109bd59fc8c5abe5d3e2ab80370f4575.jpg",
+  "e1603812cda8709393149b979c850a21.jpg",
+  "7f564f5f389c4170aaaadfdbfaafd4fc.gif",
+  "676c06aaca2ffb4b21de00467840eee5.jpg",
+  "f77e02d9f4b08cec8821cbcc84acaf12.jpg",
+  "75a561662ee991754a6fb8e32c3a3759.jpg",
+  "e8fbc6612ec97987b1436d7f91212f39.jpg",
+  "10d2e50ea3a2053f1fcb461782369ad6.jpg",
+  "07e3c54c285c92e261abe3476c4d60db.jpg",
+  "60b389841d4fe6f018b731235147f1c7.jpg",
+  "1faa1174d1285c25414c2d0b6e485105.jpg",
+  "874402083918700706.jpg",
+  "874402083918700667.jpg",
+  "874402083918700675.jpg",
+  "874402083918700635.jpg",
+  "874402083918700641.jpg",
+  "874402083918700617.jpg",
+  "874402083918700608.jpg",
+  "874402083918700581.jpg",
+  "874402083918700579.jpg",
+  "874402083918700587.jpg",
+  "874402083918700571.jpg",
+  "874402083918700573.jpg",
+  "874402083918700560.jpg",
+  "874402083918700555.jpg",
+  "874402083918700553.jpg",
+  "874402083918700518.jpg",
+  "874402083918700512.jpg",
+  "874402083918700503.jpg",
+  "874402083918700442.jpg",
+  "874402083918700492.jpg",
+  "874402083918700420.png",
+  "874402083918700401.jpg",
+  "874402083918700386.jpg",
+  "874402083918700372.jpg",
+  "874402083918700370.jpg",
+  "874402083918700358.jpg",
+  "874402083918700333.jpg",
+  "874402083918700352.jpg",
+  "874402083918700320.jpg",
+  "874402083918700279.jpg",
+  "874402083918700275.jpg",
+  "874402083918700282.jpg",
+  "874402083918700253.jpg",
+  "874402083918700237.jpg",
+  "874402083918700240.jpg",
+  "874402083918700236.jpg",
+  "874402083918700211.jpg",
+  "874402083918700205.jpg",
+  "874402083918700195.jpg",
+  "874402083918700187.jpg",
+  "874402083918700189.jpg",
+  "874402083918700179.jpg",
+  "874402083918700158.jpg",
+  "bce94805863986d7d95150068e45fb4e.jpg",
+  "c5063a1de26f3823287be623252ae10b.jpg",
+  "881d3950a482e4a0c1cb0ba01475ea0e.jpg",
+  "540cb59bf0d5846baadf10a80b97e1b7.jpg",
+  "6ec40be330da4aab718a64ae96202887.jpg",
+  "15aa7c6c9b148f263bb6850576aff652.jpg",
+  "cd90da09fd1b38c582a36a399dccca21.jpg",
+  "234a06fa4613a4c7bfef4bac291236d5.jpg",
+  "9c83c1445df0cf708d296b0665da455a.jpg",
+  "7d8f8f0c0ca9beebed1abc7e9f939f64.jpg",
+  "015349987a3a21b25b4d66356ea34e3b.jpg",
+  "d9637c2de139d76b786ddc6e67fb1c13.jpg",
+  "d48d64a26546bf6c097b91740d8ea71e.jpg",
+  "2ad9b29bf7664aef85e08931b5faff07.jpg",
+  "13e22d2386d432825d68ec72903ec5b0.jpg",
+  "2f997596c83771f76283c99f265b3d79.jpg",
+  "6554131b036e16286d1d0107c42af315.jpg",
+  "639deb122f062400bcf5a68a33f0747c.jpg",
+  "498546d95f56106d4cf57d0379130a75.jpg",
+  "d6930dc1eb40c00751f1a2a6d808d4e5.jpg",
+  "5d4b8ffa9fe1b250b09afc42651afc38.jpg",
+  "ead623454355efdb316772c0804e06c1.jpg",
+  "d71d0585d6108d0a119b0b746deddfda.jpg",
+  "72afc8701790651e1c862df16004d09c.jpg",
+  "21efe959f6c0c758b008f7ae9629d8d8.jpg",
+  "1ac49bce07e619f4e455552160c24230.jpg",
+  "13f9d636fccdfdef51c4f2b14863a5a0.jpg",
+  "2235eb11caeac809bd4fd0e88b7f31a1.jpg",
+  "28efb137bdf238aa14add0579ab72f24.jpg",
+  "874402083918700663.jpg",
+  "874402083918700639.jpg",
+  "874402083918700607.jpg",
+  "874402083918700600.jpg",
+  "874402083918700596.jpg",
+  "874402083918700594.jpg",
+  "874402083918700576.jpg",
+  "874402083918700574.jpg",
+  "874402083918700564.jpg",
+  "874402083918700552.jpg",
+  "874402083918700546.jpg",
+  "874402083918700537.jpg",
+  "874402083918700534.jpg",
+  "874402083918700529.jpg",
+  "874402083918700434.jpg",
+  "874402083918700419.jpg",
+  "874402083918700396.jpg",
+  "874402083918700393.jpg",
+  "874402083918700545.jpg",
+  "874402083918700384.png",
+  "874402083918700341.jpg",
+  "874402083918700299.jpg",
+  "874402083918700317.jpg",
+  "874402083918700288.jpg",
+  "874402083918700261.jpg",
+  "874402083918700256.jpg",
+  "874402083918700222.jpg",
+  "874402083918700186.jpg",
+  "874402083918700180.jpg",
+  "874402083918700164.jpg",
+  "874402083918700159.jpg",
+  "874402083918700157.jpg",
+  "874402083918700146.jpg",
+  "874402083918700141.jpg",
+  "501ae67a697dcef404a349c785168252.jpg",
+  "469591180b12a10011760aaa9732b4c9.jpg",
+  "3206b8c4be10decb8975606059d61a5a.jpg",
+  "00044a0bd2b87abc4f5ba94234256789.jpg",
+  "0d29a1aa190e40ac366cad528892e972.jpg",
+  "4db605329f7e603952a166baee451300.jpg",
+  "c597d7274b29b6a9ae0baca5c1506b41.jpg",
+  "c501074f814ce461f6b4a999cd3091e7.jpg",
+  "fa592e8e90d8e52ac13f539528871b66.jpg",
+  "c0ecf0ecb52b9d996b7ebde4c773d1ae.jpg",
+  "d3808cdb12d1e1b3b423cf79b149f569.jpg",
+  "2c9b89d654ae06bba1fc169ba80e5199.jpg",
+  "7d2230070b0bceb1fd26b63ccf23fa42.jpg",
+  "1560dc2168f8b7a3b873b8caaf6477bd.jpg",
+  "1a660ba163c8b26bea8127e62db25a6f.jpg",
+  "866778aca15907d7ea3ae3025eae0129.jpg",
+  "bf371d294e1d89e3c39009c8e8775483.jpg",
+  "f9cf6f7ece5a260567c210ec6f14490d.jpg",
+  "a7a04932de085df5440896794873df1b.jpg",
+  "e1cea6af63ba4f56eeb9963b17adf9a1.jpg",
+  "eb1603c1f0e52dcc69d912c00cccf535.jpg",
+  "9ba2078781f099a474a2818b2e752f5c.jpg",
+  "23c43e40ca0505687874bb28bacf6e2d.jpg",
+  "2072df46b33859c3678131f03010f0e0.jpg",
+  "370a6bd7e3459619917371b37cde56c6.jpg",
+  "3ae85b1ce66781a665eb40563bc5ca7f.jpg",
+  "0a315a43559b2bf00852918480ecf24d.jpg",
+  "3a10758ed6e1ea27126f908dca64bd3a.jpg",
+  "139160800b4d1cce8909199efddd32d2.jpg",
+  "ce5823f897503b9c32589cfbeef22e8e.jpg",
+  "799593eb7738cc5477222e6d3f5992d5.jpg",
+  "874402083918700661.jpg",
+  "874402083918700652.jpg",
+  "874402083918700642.jpg",
+  "874402083918700637.jpg",
+  "874402083918700629.jpg",
+  "874402083918700634.jpg",
+  "874402083918700622.jpg",
+  "874402083918700604.jpg",
+  "874402083918700585.jpg",
+  "874402083918700598.jpg",
+  "874402083918700569.jpg",
+  "874402083918700429.jpg",
+  "874402083918700411.jpg",
+  "874402083918700415.jpg",
+  "874402083918700376.jpg",
+  "874402083918700374.jpg",
+  "874402083918700349.jpg",
+  "874402083918700258.jpg",
+  "874402083918700263.jpg",
+  "874402083918700249.jpg",
+  "874402083918700234.jpg",
+  "874402083918700213.jpg",
+  "874402083918700209.jpg",
+  "874402083918700204.jpg",
+  "874402083918700156.jpg",
+  "874402083918700167.jpg"
+];
+
+const galeriaContainer = document.getElementById("galeria");
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+
+// 2. Função de Embaralhamento (Algoritmo Fisher-Yates)
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// 3. Funções do Lightbox
+function abrirLightbox(src) {
+  lightboxImg.src = src;
+  lightbox.style.display = "flex";
+  document.body.style.overflow = "hidden"; // Trava o scroll do fundo
+  
+  // Adiciona um estado no histórico para o botão voltar funcionar
+  history.pushState({ lightbox: true }, "");
+}
+
+function fecharLightbox() {
+  lightbox.style.display = "none";
+  lightboxImg.src = "";
+  document.body.style.overflow = "auto"; // Libera o scroll
+  
+  // Se o fechamento foi manual, removemos o estado extra do histórico
+  if (history.state && history.state.lightbox) {
+    history.back();
+  }
+}
+
+// 4. Inicialização
+function init() {
+  // Embaralha antes de renderizar
+  shuffleArray(imagens);
+
+  // Renderiza as imagens
+  imagens.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.loading = "lazy";
+    img.alt = "Imagem da Galeria";
+    
+    img.addEventListener("click", (e) => {
+      e.stopPropagation();
+      abrirLightbox(src);
+    });
+    
+    galeriaContainer.appendChild(img);
+  });
+}
+
+// 5. Event Listeners
+// Fechar ao clicar fora ou na própria imagem (conforme solicitado)
+lightbox.addEventListener("click", fecharLightbox);
+
+// Fechar com a tecla ESC
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && lightbox.style.display === "flex") {
+    fecharLightbox();
+  }
+});
+
+// Manipular o botão VOLTAR do navegador
+window.addEventListener("popstate", (e) => {
+  if (lightbox.style.display === "flex") {
+    // Se o usuário clicou em voltar enquanto o lightbox estava aberto
+    lightbox.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+});
+
+// Iniciar a galeria
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Músicas</title>
+
+  <!-- Fonte Seasons -->
+  <link href="https://fonts.cdnfonts.com/css/seasons" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      background-image: url("musica.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      font-family: 'Seasons', serif;
+      color: #fff;
+    }
+
+    /* botão voltar */
+    .voltar {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+
+      background: rgba(0,0,0,0.4);
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .voltar:active {
+      transform: scale(0.95);
+    }
+
+    .lista {
+      max-width: 420px;
+      margin: 120px auto 40px;
+      padding: 16px;
+    }
+
+    .musica {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(6px);
+
+      border-radius: 28px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+
+      cursor: pointer;
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .musica:hover {
+      transform: scale(1.02);
+      background: rgba(0,0,0,0.5);
+    }
+
+    .titulo {
+      font-size: 15px;
+      letter-spacing: 1.4px;
+      line-height: 1.3;
+      max-width: 75%;
+    }
+
+    .thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 480px) {
+      .titulo {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="voltar" onclick="window.location.href='home.html'">←</button>
+
+  <div class="lista" id="lista"></div>
+
+  <script>
+    const links = [
+      "https://youtu.be/GiXHRwNTu_I",
+      "https://youtu.be/zBUurckfIiE",
+      "https://youtu.be/LOiQ5BvDlSw",
+      "https://youtu.be/OBaEbTuDQEc",
+      "https://youtu.be/aZkPhfFXTB0",
+      "https://youtu.be/X9YHnImcww0",
+      "https://youtu.be/JR7TiUHp4Ak",
+      "https://youtu.be/DnDE5vsx55A",
+      "https://youtu.be/rezGbTZco38",
+      "https://youtu.be/WkLpoUiasZ8",
+      "https://youtu.be/4DhNQWw877w",
+      "https://youtu.be/kCjJU9sz7nY",
+      "https://youtu.be/MdrOs55se5Y",
+      "https://youtu.be/3yTwzx4SUOY",
+      "https://youtu.be/9mmiOFzkeh4",
+      "https://youtu.be/PrHzSxP0ypg",
+      "https://youtu.be/kszkoFI84JU",
+      "https://youtu.be/gUpGTRR4Tt4",
+      "https://youtu.be/0CEkbD3nepI",
+      "https://youtu.be/FeDakbkxkcc",
+      "https://youtu.be/1-knKc1O8e0",
+      "https://youtu.be/l7e_NxisJ5E",
+      "https://youtu.be/nSDgHBxUbVQ",
+      "https://youtu.be/ku4KYI_2sKU",
+      "https://youtu.be/U3M33tm_Vtg",
+      "https://youtu.be/NX5hN098AEA",
+      "https://youtu.be/ad52cOoxscY",
+      "https://youtu.be/hFUlwlZnPHo",
+      "https://youtu.be/RG-3pMgB5Og",
+      "https://youtu.be/UIN5dfvyKXE",
+      "https://youtu.be/Zmvc_C66yGQ",
+      "https://youtu.be/mGZM4qmHxkU",
+      "https://youtu.be/nwulN_x8k00",
+      "https://youtu.be/mctjoaC68h0",
+      "https://youtu.be/IpFX2vq8HKw",
+      "https://youtu.be/KmOVNVZEP9o",
+      "https://youtu.be/w3l6mWtvS4g",
+      "https://youtu.be/xMuTn1-dFq0"
+    ];
+
+    const lista = document.getElementById("lista");
+
+    links.forEach(link => {
+      fetch(`https://www.youtube.com/oembed?url=${link}&format=json`)
+        .then(res => res.json())
+        .then(data => {
+          const div = document.createElement("div");
+          div.className = "musica";
+          div.onclick = () => window.open(link, "_blank");
+
+          div.innerHTML = `
+            <div class="titulo">${data.title}</div>
+            <img class="thumb" src="${data.thumbnail_url}">
+          `;
+
+          lista.appendChild(div);
+        });
+    });
+  </script>
+
+</body>
+</html>
