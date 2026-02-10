@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartas</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Georgia, serif;
+}
+
+body {
+  min-height: 100vh;
+  background: url("carta.png") center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  padding: 40px 15px;
+}
+
+/* Container principal */
+.container {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+/* Foto usuário */
+.profile-pic {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #8b6f4e;
+  margin-bottom: 10px;
+}
+
+/* Título */
+h2 {
+  color: #4a3a28;
+  margin-bottom: 20px;
+}
+
+/* Lista de cartas */
+.cartas-container {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Carta item */
+.carta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(139,111,78,0.08);
+  border: 1px solid #8b6f4e;
+  border-radius: 12px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.carta:hover {
+  background: rgba(139,111,78,0.2);
+  transform: scale(1.03);
+}
+
+.check {
+  font-size: 18px;
+  color: #bbb;
+}
+
+.check.lida {
+  color: #8b6f4e;
+}
+
+/* Modal da carta */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fffdf8;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;            /* limite de altura */
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content h3 {
+  margin-bottom: 15px;
+  color: #4a3a28;
+}
+
+.modal-content p {
+  line-height: 1.6;
+  color: #3a2f23;
+  white-space: pre-line;
+  overflow-y: auto;        /* rolagem vertical */
+  flex: 1;                 /* ocupa o espaço disponível */
+  padding-right: 5px;
+}
+
+.fechar {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.fechar button {
+  background: #8b6f4e;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* Botão voltar */
+.voltar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+}
+
+.voltar a {
+  text-decoration: none;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="voltar">
+  <a href="home.html">← voltar</a>
+</div>
+
+<div class="container">
+  <img src="perfil.jpg" class="profile-pic" alt="Perfil">
+  <h2>Suas Cartas</h2>
+
+  <div class="cartas-container" id="cartas"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3 id="modalTitulo"></h3>
+    <p id="modalTexto"></p>
+    <div class="fechar">
+      <button onclick="fecharCarta()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Cartas escritas DENTRO do código
+const cartas = [
+  {
+    titulo: "Sobre Identidade",
+    texto: `Você já parou para refletir sobre o quanto somos profundamente inconscientes diante das verdades que sustentam esse universo que vivemos?  Vivemos como se soubéssemos muito, como se tivéssemos domínio sobre o real, quando na verdade não compreendemos sequer uma fração mínima, sabe? talvez nem uma parte dentre um milhão dos mistérios que nos cercam. Caminhamos sobre o tempo, respiramos o espaço, observamos os astros, mas desconhecemos a substância mais íntima daquilo que somos e daquilo que existe.
+ Os homens  e quando digo os homens, incluo a mim, incluo você, incluo todos nós seres humanos, passam a vida inteira procurando respostas. Perguntam-se sobre o outro, sobre o amor, sobre a dor, sobre a vida, sobre o sentido do existir, sobre o caos do universo, sobre os astros distantes, sobre a ordem da natureza e sobretudo, sobre aquilo que pulsa de dentro para dentro: quem sou eu? Que pergunta escandalosa!!!! Mas será que encontram respostas? Na maioria das vezes não. E quando acreditam ter encontrado, logo percebem que aquilo que parecia sólido se dissolve diante de uma nova dúvida, de uma nova experiência, de uma nova dor ou de um novo olhar. Tanto seu mesmo, quanto de uma nova perspectiva de um novo alguém até então ainda não envolvido. 
+ A grande questão é que essas perguntas, sejam elas voltadas ao mundo exterior ou as regiões mais profundas do nosso interior, elas não possuem respostas fixas, tipo, pelo menos não no campo humano. Nós seres humanos, não podemos bater no peito e afirmar, com absoluta certeza: “minha resposta está totalmente correta”. Pois ao fazê-lo, instantaneamente declararíamos o outro errado, quando na realidade, talvez estejamos todos apenas juntando os fragmentos imperfeitos de uma verdade maior. Será que me compreende?
+ As múltiplas respostas, vindas de pessoas distintas, desconhecidas entre si, com histórias, dores e percepções completamente diferentes, acabam por se unir, não para formar uma resposta clara, mas uma imagem borrada, imprecisa e fragmentada, uma resposta que nos trará ainda mais dúvidas. E isso não significa que essas respostas estejam erradas, tampouco que estejam certas. Significa apenas que são humanas. É normal...
+ O que vou diizwr agora pode soar contraditório a tudo o que foi dito antes, mas é exatamente aqui que repousa minha convicção mais profunda: eu acredito em verdades absolutas, não em verdades relativas. 🕊 A limitação não está na verdade em si, mas em nossa incapacidade de compreendê-la completamente. 
+ Deus em sua infinita sabedoria, não é apenas aquele que tem as respostas para as grandes perguntas que inquietam o ser humano, perguntas que para nós são como abismos, mas que para Ele são pequenas, mas como também Ele próprio é a resposta. Não uma resposta conceitual, lógica ou meramente explicável, mas uma resposta viva, eterna e suficiente. Você compreende a dimensão do meu pensamento?? 
+ Bom, e quando nos voltamos para a pergunta mais dolorosa e persistente de todas: “quem sou eu?”,  percebo o quanto tentamos nos definir por aquilo que muda: nossos sentimentos, nossas escolhas, nossos erros, nossos acertos, nossas versões do passado.
+Eu, Moisés Pereira dos Santos, sob o pseudônimo artístico M. P. Santos, escrevendo agora a você, Yara Damasceno, peço que leia com atenção algo que já escrevi anteriormente, pois etudo toca exatamente nesse ponto sensível da identidade, do ser e do constante tornar-se. O texto diz assim:
+
+"Ser que se refaz - M. P. Santos
+           Somos viajantes do próprio ser, em perpétuo movimento rumo as camadas mais profundas da alma. A cada passo, desfazemo-nos do que pensávamos ser e emergimos pouco a pouco em novas formas de nós mesmos, pois conhecer-se é isto, um eterno renascer. (Às 12:06 _ 04 de junho de 2025)"
+
+Como nós seres tão instáveis, mutáveis e inconstantes em personalidade, poderíamos definir com precisão quem somos? Como poderíamos nos encontrar plenamente se aquilo que éramos ontem já não nos representa hoje, e se amanhã, de maneiraque nãopodemos evitar, não seremos mais quem somos agora? No máximo, conseguimos descrever fragmentos, traços temporários de uma identidade em constante transformação mais lenta. E mesmo essas descrições no futuro se tornarão imprecisas, insuficientes, pois mudaremos. 
+ Mas há algo que precisamos compreender é que o fato de não nos entendermos plenamente não significa que não sejamos compreendidos. Há aguém que pode nos descrever com exatidão, não porque nos observa de fora, mas porque nos conhece desde antes do tempo de nascimento, desde o gerar no ventre, SIM!!. Ele não muda. Ele não se contradiz. Ele é o mesmo ontem, hoje e eternamente. E justamente por não mudar, Ele conhece aquilo em nós que permanece, mesmo quando tudo o mais se transforma. É EXATAMENTE NESSE PONTO QUE QUERO CHEGAR:
+ Por isso, Yara, não se angustie por não ser mais quem você foi. Não se prenda a culpa de ter mudado, nem ao medo de ainda não saber quem está se tornando. Reinvente-se. Refaça-se. Permita-se ser diferente a cada dia. Nunca seremos iguais, nem mesmo a nós mesmos. Tem uma essência que não se perde e é nela que Deus nos define. Não pelo que fazemos, não pelos nossos erros ou acertos momentâneos, mas por aquilo que Ele nos concedeu desde o ventre, antes mesmo que soubéssemos perguntar quem éramos ou escrever nossos nomes. Não é sobre nos entendermos completamente, mas sobre confiar naquele que sempre nos entendeu. 
+
+Essa é a primeira de muitas cartas por aqui.`
+  },
+  {
+    titulo: "Carta 2",
+    texto: `ainda sem conteúdo`
+  },
+  {
+    titulo: "Carta 3",
+    texto: `ainda sem conteúdo`
+  }
+];
+
+// Renderizar cartas
+const container = document.getElementById("cartas");
+
+cartas.forEach((carta, index) => {
+  const div = document.createElement("div");
+  div.className = "carta";
+
+  div.innerHTML = `
+    <span>${carta.titulo}</span>
+    <span class="check" id="check${index}">✔</span>
+  `;
+
+  div.onclick = () => abrirCarta(index);
+  container.appendChild(div);
+});
+
+function abrirCarta(index) {
+  document.getElementById("modalTitulo").innerText = cartas[index].titulo;
+  document.getElementById("modalTexto").innerText = cartas[index].texto;
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById(`check${index}`).classList.add("lida");
+}
+
+function fecharCarta() {
+  document.getElementById("modal").style.display = "none";
+}
+</script>
+
+</body>
+</html>
